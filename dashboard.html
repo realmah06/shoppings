@@ -20,7 +20,7 @@
 
             <ul class="list-unstyled components">
                 <li class="active">
-                    <a href="#">
+                    <a href="#" onclick="loadDashboard()">
                         <i class="bi bi-speedometer2"></i>
                         Dashboard
                     </a>
@@ -32,10 +32,10 @@
                     </a>
                     <ul class="collapse list-unstyled" id="salesSubmenu">
                         <li>
-                            <a href="#" onclick="loadContent('sales-invoice')">Invoices</a>
+                            <a href="#" onclick="loadModule('sales-invoice')">Invoices</a>
                         </li>
                         <li>
-                            <a href="#" onclick="loadContent('sales-report')">Reports</a>
+                            <a href="#" onclick="loadModule('sales-report')">Reports</a>
                         </li>
                     </ul>
                 </li>
@@ -46,21 +46,21 @@
                     </a>
                     <ul class="collapse list-unstyled" id="inventorySubmenu">
                         <li>
-                            <a href="#" onclick="loadContent('products')">Products</a>
+                            <a href="#" onclick="loadModule('products')">Products</a>
                         </li>
                         <li>
-                            <a href="#" onclick="loadContent('stock-adjustment')">Stock Adjustment</a>
+                            <a href="#" onclick="loadModule('stock-adjustment')">Stock Adjustment</a>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" onclick="loadContent('vendors')">
+                    <a href="#" onclick="loadModule('vendors')">
                         <i class="bi bi-truck"></i>
                         Vendors
                     </a>
                 </li>
                 <li>
-                    <a href="#" onclick="loadContent('customers')">
+                    <a href="#" onclick="loadModule('customers')">
                         <i class="bi bi-people"></i>
                         Customers
                     </a>
@@ -72,13 +72,13 @@
                     </a>
                     <ul class="collapse list-unstyled" id="financialSubmenu">
                         <li>
-                            <a href="#" onclick="loadContent('expenses')">Expenses</a>
+                            <a href="#" onclick="loadModule('expenses')">Expenses</a>
                         </li>
                         <li>
-                            <a href="#" onclick="loadContent('bank-transfer')">Bank Transfers</a>
+                            <a href="#" onclick="loadModule('bank-transfer')">Bank Transfers</a>
                         </li>
                         <li>
-                            <a href="#" onclick="loadContent('credit-debit')">Credit/Debit Adjustments</a>
+                            <a href="#" onclick="loadModule('credit-debit')">Credit/Debit Adjustments</a>
                         </li>
                     </ul>
                 </li>
@@ -106,7 +106,7 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-person-circle"></i> Admin
+                                    <i class="bi bi-person-circle"></i> <span id="currentUser">Admin</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" href="#">Profile</a></li>
@@ -122,92 +122,97 @@
 
             <div class="container-fluid" id="main-content">
                 <!-- Dynamic content will be loaded here -->
-                <div class="row">
-                    <div class="col-12">
-                        <h2>Dashboard</h2>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="card text-white bg-primary mb-3">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Today's Sales</h5>
-                                                <h2 class="card-text" id="todaySales">$0.00</h2>
-                                            </div>
-                                        </div>
+                <div id="module-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <template id="dashboard-template">
+        <div class="row">
+            <div class="col-12">
+                <h2>Dashboard</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="card text-white bg-primary mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Today's Sales</h5>
+                                        <h2 class="card-text" id="todaySales">$0.00</h2>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="card text-white bg-success mb-3">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Monthly Sales</h5>
-                                                <h2 class="card-text" id="monthlySales">$0.00</h2>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-white bg-success mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Monthly Sales</h5>
+                                        <h2 class="card-text" id="monthlySales">$0.00</h2>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="card text-white bg-warning mb-3">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Low Stock Items</h5>
-                                                <h2 class="card-text" id="lowStockItems">0</h2>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-white bg-warning mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Low Stock Items</h5>
+                                        <h2 class="card-text" id="lowStockItems">0</h2>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="card text-white bg-danger mb-3">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Pending Invoices</h5>
-                                                <h2 class="card-text" id="pendingInvoices">0</h2>
-                                            </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-white bg-danger mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pending Invoices</h5>
+                                        <h2 class="card-text" id="pendingInvoices">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Recent Sales</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover" id="recentSalesTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Invoice #</th>
+                                                        <th>Customer</th>
+                                                        <th>Amount</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Will be populated by JS -->
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row mt-4">
-                                    <div class="col-md-6">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h5>Recent Sales</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-hover" id="recentSalesTable">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Invoice #</th>
-                                                                <th>Customer</th>
-                                                                <th>Amount</th>
-                                                                <th>Date</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <!-- Will be populated by JS -->
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Stock Alerts</h5>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h5>Stock Alerts</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-hover" id="stockAlertsTable">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Product</th>
-                                                                <th>Current Stock</th>
-                                                                <th>Min Level</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <!-- Will be populated by JS -->
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover" id="stockAlertsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th>Current Stock</th>
+                                                        <th>Min Level</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Will be populated by JS -->
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -217,100 +222,52 @@
                 </div>
             </div>
         </div>
-    </div>
+    </template>
 
+    <template id="sales-invoice-template">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Sales Invoices</h2>
+                    <button class="btn btn-primary" onclick="showNewInvoiceModal()">
+                        <i class="bi bi-plus-circle"></i> New Invoice
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="invoicesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Will be populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Include all JS files -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="auth.js"></script>
+    <script src="data/database.js"></script>
     <script src="app.js"></script>
-    <script>
-        // Initialize dashboard data
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!localStorage.getItem('loggedIn')) {
-                window.location.href = 'index.html';
-            }
-            
-            updateDashboardStats();
-            loadRecentSales();
-            loadStockAlerts();
-        });
-
-        function updateDashboardStats() {
-            // Today's sales
-            const todaySales = Math.random() * 5000;
-            document.getElementById('todaySales').textContent = '$' + todaySales.toFixed(2);
-            
-            // Monthly sales
-            const monthlySales = Math.random() * 50000;
-            document.getElementById('monthlySales').textContent = '$' + monthlySales.toFixed(2);
-            
-            // Low stock items
-            document.getElementById('lowStockItems').textContent = '3';
-            
-            // Pending invoices
-            document.getElementById('pendingInvoices').textContent = '2';
-        }
-
-        function loadRecentSales() {
-            const tableBody = document.querySelector('#recentSalesTable tbody');
-            tableBody.innerHTML = '';
-            
-            // Sample data
-            const sales = [
-                { invoice: 'INV-2023-001', customer: 'John Doe', amount: 1250.50, date: '2023-06-15' },
-                { invoice: 'INV-2023-002', customer: 'Jane Smith', amount: 850.75, date: '2023-06-14' },
-                { invoice: 'INV-2023-003', customer: 'Acme Corp', amount: 3200.00, date: '2023-06-13' },
-                { invoice: 'INV-2023-004', customer: 'XYZ Ltd', amount: 575.25, date: '2023-06-12' },
-                { invoice: 'INV-2023-005', customer: 'Test Company', amount: 120.00, date: '2023-06-11' }
-            ];
-            
-            sales.forEach(sale => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${sale.invoice}</td>
-                    <td>${sale.customer}</td>
-                    <td>$${sale.amount.toFixed(2)}</td>
-                    <td>${sale.date}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        function loadStockAlerts() {
-            const tableBody = document.querySelector('#stockAlertsTable tbody');
-            tableBody.innerHTML = '';
-            
-            // Sample data
-            const alerts = [
-                { product: 'Premium Widget', current: 3, min: 10 },
-                { product: 'Basic Gadget', current: 2, min: 5 },
-                { product: 'Deluxe Thingamajig', current: 1, min: 3 }
-            ];
-            
-            alerts.forEach(alert => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${alert.product}</td>
-                    <td class="${alert.current <= alert.min ? 'text-danger fw-bold' : ''}">${alert.current}</td>
-                    <td>${alert.min}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        function loadContent(page) {
-            // In a real app, this would load different content based on the page parameter
-            Swal.fire({
-                title: 'Loading Content',
-                text: `Would load ${page.replace('-', ' ')} content here`,
-                icon: 'info'
-            });
-        }
-
-        function logout() {
-            localStorage.removeItem('loggedIn');
-            window.location.href = 'index.html';
-        }
-    </script>
+    <script src="sales.js"></script>
+    <script src="inventory.js"></script>
+    <script src="vendors.js"></script>
+    <script src="customers.js"></script>
+    <script src="financial.js"></script>
 </body>
-                                              </html>
+</html>
